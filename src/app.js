@@ -1,4 +1,15 @@
 import express from "express";
+import conectaNaDatabase from "./config/dbConnect.js";
+
+const conexao = await conectaNaDatabase();
+
+conexao.on("error", (erro) => {
+    console.error("erro de conexão: ", erro);
+});
+
+conexao.once("open", () => {
+    console.log("Conexão feita com sucesso");
+})
 
 const app = express();
 app.use(express.json());
@@ -46,10 +57,12 @@ app.put("/livros/:id", (req, res) => {
 });
 
 //METODOS DELETE
-app.delete("/livros/:id", (req, res)=>{
+app.delete("/livros/:id", (req, res) => {
     const index = buscaLivros(req.params.id);
     livros.splice(index, 1);
     res.status(200).send("Livro deletado com sucesso");
 });
 
 export default app;
+
+
